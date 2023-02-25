@@ -13,7 +13,7 @@ jobs:
     name: 'Terraform'
     strategy:
       matrix:
-        directory: [./envs/web2]
+        directory: [./envs/web2, ./envs/web3]
     runs-on: macos-latest
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -47,4 +47,3 @@ jobs:
     # Checks that all Terraform configuration files validate
     - name: Terraform Validate
       run: terraform validate
-      working-directory: ${{ matrix.directory }}
