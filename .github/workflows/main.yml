@@ -13,7 +13,7 @@ jobs:
     name: 'Terraform'
     strategy:
       matrix:
-        directory: [./envs/web2, ./envs/web3]
+        directory: [./envs/web2]
     runs-on: macos-latest
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
