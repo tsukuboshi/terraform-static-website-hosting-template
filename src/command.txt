@@ -1,0 +1,38 @@
+# バケット内のオブジェクト削除
+aws s3 ls
+echo ${BUCKET_NAME}
+aws s3 rm s3://${BUCKET_NAME} --recursive
+
+# パスワード生成
+echo -n "${USERNAME}:${PASSWORD}" | base64
+
+# S3オブジェクトメタデータ確認
+BUCKETNAME=jtb-ecsite-test-content-961848859267-hkg
+
+for KEY in $(aws s3api list-objects \
+  --bucket $BUCKETNAME \
+  --query "Contents[].[Key]" \
+  --output text )
+do
+  aws s3api head-object \
+    --bucket $BUCKETNAME \
+    --key $KEY \
+    --query "[\`$KEY\`,CacheControl]" \
+    --output text
+done
+
+# S3オブジェクトメタデータ付与
+BUCKETNAME=jtb-ecsite-test-content-961848859267-hkg
+
+for KEY in $(aws s3api list-objects \
+  --bucket $BUCKETNAME \
+  --query "Contents[].[Key]" \
+  --output text )
+do
+  aws s3api copy-object \
+    --bucket $BUCKETNAME \
+    --copy-source $BUCKETNAME/$KEY \
+    --key $KEY \
+    --cache-control "max-age=600" \
+    --metadata-directive "REPLACE"
+done

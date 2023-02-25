@@ -1,0 +1,50 @@
+name: 'Terraform'
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    strategy:
+      matrix:
+        directory: [./envs/web2]
+    runs-on: macos-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Setup HashiCorp tap repository
+    - name: Setup Terraform
+      run: brew tap hashicorp/tap
+
+    # Install the latest version of Terraform CLI
+    - name: Install Terraform
+      run: brew install hashicorp/tap/terraform
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ${{ matrix.directory }}
+
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      run: terraform fmt -recursive -check
+
+    # Checks that all Terraform configuration files validate
+    - name: Terraform Validate
+      run: terraform validate
+      working-directory: ${{ matrix.directory }}
